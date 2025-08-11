@@ -11,6 +11,8 @@ typedef struct {
 
 Argument createArg(const char *name, char *value);
 
+int parseIntArg(const char *name, const char *value, int min, int max, int *outPtr);
+
 int parseArgs(int argc, char *argv[], Argument *args[], int numArgs);
 
 #endif // argparse.h

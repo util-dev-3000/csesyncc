@@ -1,5 +1,6 @@
 #include "argparse.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 Argument createArg(const char *name, char *value) {
@@ -8,6 +9,21 @@ Argument createArg(const char *name, char *value) {
     arg.value = value;
     arg.passed = false;
     return arg;
+}
+
+int parseIntArg(const char *name, const char *value, int min, int max, int *outPtr) {
+    if (value == NULL) {
+        printf("%s argument must be specified.\n", name);
+        return 1;
+    }
+    char *endptr;
+    long parsed = strtol(value, &endptr, 10);
+    if (*endptr != '\0' || parsed < min || parsed > max) {
+        printf("Invalid %s: %s (must be between %d and %d)\n", name, value, min, max);
+        return false;
+    }
+    *outPtr = (int)parsed;
+    return 0;
 }
 
 int parseArgs(int argc, char *argv[], Argument *args[], int numArgs) {

@@ -13,11 +13,16 @@ int main(int argc, char *argv[])
     Argument portArg = createArg("port", "13399");
     Argument directoryArg = createArg("dir", NULL);
 
+    // Can be specified only by client
+    // Chunk size should be specified by the client to avoid server-side exploiting
+    Argument chunkSizeArg = createArg("chunksize", "4096"); // 4 KB by default
+
     Argument *args[] = {
         &modeArg,
         &hostArg,
         &portArg,
         &directoryArg,
+        &chunkSizeArg,
     };
 
     // Each argument is 2 pointers + 1 byte bool, fixed size
@@ -39,18 +44,12 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    int port = -1;
-
-    if (portArg.value != NULL) {
-        char *endptr;
-        port = (int) strtol(portArg.value, &endptr, 10);
-        if (*endptr != '\0' || port <= 0 || port > 65535) {
-            printf("Invalid port number: %s\n", portArg);
-            return 1;
+    int port;
+    {
+        int res = parseIntArg("Port", portArg.value, 1, 65535, &port);
+        if (res!=0) {
+            return res;
         }
-    } else {
-        printf("Port argument must be specified.\n");
-        return 1;
     }
 
     if (directoryArg.value == NULL) {
@@ -58,24 +57,37 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    int chunkSize;
+    {
+        int res = parseIntArg("Chunk size", chunkSizeArg.value, 256, 4194304, &chunkSize); // Min 256B, max 4 MB
+        if (res!=0) {
+            return res;
+        }
+    }
+
     printf("MODE: %s\n", modeArg.value);
     printf("HOST: %s\n", hostArg.value);
     printf("PORT: %d\n", port);
     printf("DIRECTORY: %s\n", directoryArg.value);
+    printf("CHUNKSIZE: %dB\n", chunkSize);
 
-    if(modeArg.value=="client")
+    if (strcmp(modeArg.value, "client") == 0)
     {
         int res = serveClient(args);
         if(res!=0){
             return res;
         }
     }
-    else if(modeArg.value=="server")
+    else if(strcmp(modeArg.value, "server") == 0)
     {
         int res = serveServer(args);
         if(res!=0){
             return res;
         }
+    }
+    else {
+        printf("%s mode is not a valid mode.", modeArg.value);
+        return 1;
     }
 
     return 0;
