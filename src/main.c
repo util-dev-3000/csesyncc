@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <argparse.h>
+#include <server.h>
+#include <client.h>
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +19,7 @@ int main(int argc, char *argv[])
     };
 
     // Each argument is 2 pointers + 1 byte bool, fixed size
-    int numArgs = sizeof(args ) / sizeof(args[0]);
+    int numArgs = sizeof(args) / sizeof(args[0]);
 
     {
         int res = parseArgs(argc, argv, args, numArgs);
@@ -52,6 +54,21 @@ int main(int argc, char *argv[])
     printf("MODE: %s\n", modeArg.value);
     printf("HOST: %s\n", hostArg.value);
     printf("PORT: %d\n", port);
+
+    if(modeArg.value=="client")
+    {
+        int res = serveClient(args);
+        if(res!=0){
+            return res;
+        }
+    }
+    else if(modeArg.value=="server")
+    {
+        int res = serveServer(args);
+        if(res!=0){
+            return res;
+        }
+    }
 
     return 0;
 }
