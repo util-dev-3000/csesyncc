@@ -19,8 +19,11 @@ int main(int argc, char *argv[])
     // Each argument is 2 pointers + 1 byte bool, fixed size
     int numArgs = sizeof(args ) / sizeof(args[0]);
 
-    if(parseArgs(argc, argv, args, numArgs)!=0){
-        return 1;
+    {
+        int res = parseArgs(argc, argv, args, numArgs);
+        if(res!=0){
+            return res;
+        }
     }
 
     if (modeArg.value == NULL) {
