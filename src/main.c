@@ -11,11 +11,13 @@ int main(int argc, char *argv[])
     Argument modeArg = createArg("mode", NULL);
     Argument hostArg = createArg("host", "0.0.0.0");
     Argument portArg = createArg("port", "13399");
+    Argument directoryArg = createArg("dir", NULL);
 
     Argument *args[] = {
         &modeArg,
         &hostArg,
         &portArg,
+        &directoryArg,
     };
 
     // Each argument is 2 pointers + 1 byte bool, fixed size
@@ -51,9 +53,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if (directoryArg.value == NULL) {
+        printf("Directory argument must be specified.\n");
+        return 1;
+    }
+
     printf("MODE: %s\n", modeArg.value);
     printf("HOST: %s\n", hostArg.value);
     printf("PORT: %d\n", port);
+    printf("DIRECTORY: %s\n", directoryArg.value);
 
     if(modeArg.value=="client")
     {
