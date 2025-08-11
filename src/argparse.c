@@ -11,6 +11,9 @@ Argument createArg(const char *name, char *value) {
     return arg;
 }
 
+/*
+Parses only as int for now, not unsigned int or other int types
+*/
 int parseIntArg(const char *name, const char *value, int min, int max, int *outPtr) {
     if (value == NULL) {
         printf("%s argument must be specified.\n", name);
