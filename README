@@ -1,0 +1,26 @@
+Create versions and print the version when the program is launched
+Add key (password) to the args
+Verify all of the args by syntax (ip being valid)
+Verify all of the args practically (folders existing etc)
+Convert host as domain to ip if its valid (both for the server and the client)
+Create some deduplication algorithm
+
+- Both
+Implement an asymmetric connection key exchange for the connection (so the master-key is not leaked over the web)
+Implement a custom protocol for communication
+Verify that the other side is also using the protocol
+Verify that all the keys are correct (master-key, encryption key, connection key)
+
+- Client
+The --dir flag may be either a file or a directory, (even if they already exist)
+Verify that the server uses the same chunk size
+Create an encryption key for the files, either the client specifies it in args, or either create a key-file the client will use (server must not know it as the files will be stored encrypted on the server)
+Read the files in the directory / the file chunk by chunk
+Use that encryption key to encrypt the file by chunks
+Create a synchronization algorithm so all changed files are updated dynamically (with the deduplication)
+
+- Server
+The --dir flag must be a file (even if it exists), not a directory
+Protect the port from unknown protocol connections and too long connections (to prevent hard-lock)
+Implement a system to make multiple connections at once (so bots cannot disrupt traffic), BUT lock all of the new connections if the client is already connected
+Log all of the connection attempts in to the stdout or also in the file (make an optional setting for a log file, but log file should not exist by default)
